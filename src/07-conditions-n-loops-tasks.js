@@ -367,8 +367,8 @@ function isBracketsBalanced(str) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  return num.toString(n);
 }
 
 
@@ -384,8 +384,17 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  if (!pathes.every((el) => el[0] === '/')) return '';
+  const arr = pathes.map((el) => el.split('/')).flat();
+  // const result = '/';
+  const matches = {};
+  for (let i = 0; i < arr.length; i += 1) {
+    matches[arr[i]] = matches[arr[i]] ? matches[arr[i]] + 1 : 1;
+  }
+  let result = Object.keys(matches).filter((el) => matches[el] === pathes.length);
+  result = result.join('/');
+  return `${result}/`;
 }
 
 
@@ -407,8 +416,20 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const n = m1.length;
+  const m = m2[0].length;
+  const len = m1[0].length;
+  const result = Array(n).fill([]).map(() => Array(m).fill(0));
+  for (let r1 = 0; r1 < n; r1 += 1) {
+    for (let r2 = 0; r2 < m; r2 += 1) {
+      for (let i = 0; i < len; i += 1) {
+        result[r1][r2] += m1[r1][i] * m2[i][r2];
+      }
+    }
+  }
+
+  return result;
 }
 
 
@@ -442,8 +463,46 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function checkWinTicTacToe(a, b, c, field) {
+  const simb = field[a];
+  if (simb === undefined) return undefined;
+  if (simb !== field[b]) return undefined;
+  if (simb !== field[c]) return undefined;
+  return true;
+}
+
+function fillGapTicTacToe(arr) {
+  if (arr.length === 3) return arr;
+  arr.push(undefined);
+  return fillGapTicTacToe(arr);
+}
+
+function evaluateTicTacToePosition(position) {
+  // [[0 1 2]
+  // [3 4 5]
+  // [6 7 8]]
+  // [0 1 2 3 4 5 6 7 8]
+
+  const winPositions = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  const fixedPosition = position.map((arr) => ((arr.length === 3) ? arr : fillGapTicTacToe(arr)));
+  const field = fixedPosition.flat();
+  let result;
+  for (let i = 0; i < winPositions.length; i += 1) {
+    result = checkWinTicTacToe(winPositions[i][0], winPositions[i][1], winPositions[i][2], field);
+    if (result !== undefined) {
+      return field[winPositions[i][0]];
+    }
+  }
+  return result;
 }
 
 
